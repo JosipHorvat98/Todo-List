@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import TodoList from './components/TodoList';
 import AddTodo from './components/AddTodo';
+import Filter from './components/Filter';
 import './App.css';
 
 const App = () => {
@@ -9,6 +10,7 @@ const App = () => {
     const savedTodos = localStorage.getItem('todos');
     return savedTodos ? JSON.parse(savedTodos) : [];
   });
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos));
@@ -35,11 +37,22 @@ const App = () => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
+  const filteredTodos = todos.filter((todo) => {
+    if (filter === 'completed') {
+      return todo.completed;
+    } else if (filter === 'pending') {
+      return !todo.completed;
+    } else {
+      return true;
+    }
+  });
+
   return (
     <div className="App">
       <Header />
       <AddTodo addTodo={addTodo} />
-      <TodoList todos={todos} toggleComplete={toggleComplete} deleteTodo={deleteTodo} />
+      <Filter setFilter={setFilter} />
+      <TodoList todos={filteredTodos} toggleComplete={toggleComplete} deleteTodo={deleteTodo} />
     </div>
   );
 };
